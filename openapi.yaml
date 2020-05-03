@@ -1,0 +1,186 @@
+openapi: 3.0.0
+info:
+  description: "This is a simple service, just to use in a Uni project"
+  version: "1.0.0"
+  title: "Swagger SmallStore"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+
+servers: 
+  - url: "https://app-small-store.herokuapp.com/api/v1"
+    description: "Version 1"
+
+tags:
+- name: "login"
+  description: "Authentication"
+- name: "user"
+  description: "Operations about user"
+- name: "store"
+  description: "Access Store Categories"
+
+paths:
+  /login:
+    post:
+      tags:
+      - "login"
+      summary: "Login the user"
+      description: ""
+      operationId: "login"
+      requestBody:
+        description: "Login object"
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                email:
+                  type: "string"
+                password:
+                  type: "string"
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  token:
+                    type: "string"
+        "400":
+          description: "BadRequest"
+          content:
+            application/json:
+              schema:
+               $ref: '#/components/schemas/Error'
+        "401":
+          description: "Unauthorized - Invalid Username and/or Password"
+          content:
+            application/json:
+              schema:
+               $ref: '#/components/schemas/Error'
+  /logout:
+    post:
+      tags:
+      - "login"
+      summary: "Logs the user out and remove the token"
+      description: ""
+      operationId: "logout"
+      responses:
+        "204":
+          description: "NoContent - successful operation"
+        "401":
+          description: "Unauthorized - Invalid or expired Token"
+          content:
+            application/json:
+              schema:
+               $ref: '#/components/schemas/Error'
+        "403":
+          description: "Forbidden - No token provided"
+          content:
+            application/json:
+              schema:
+               $ref: '#/components/schemas/Error'
+        "500":
+          description: "Internal Server Error"
+          content:
+            application/json:
+              schema:
+               $ref: '#/components/schemas/Error'
+      security:
+        - bearerAuth: []
+  /users:
+    post:
+      tags: 
+      - "user"
+      summary: "Create a user"
+      description: ""
+      operationId: "createUser"
+      requestBody:
+        description: "Create User Object"
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                firstName:
+                  type: "string"
+                lastName:
+                  type: "string"
+                email:
+                  type: "string"
+                password:
+                  type: "string"
+      responses:
+        "201":
+          description: "Created Successfully"
+        "400":
+          description: "BadRequest"
+          content:
+            application/json:
+              schema:
+               $ref: '#/components/schemas/Error'
+        "500":
+          description: "Internal Server Error"
+          content:
+            application/json:
+              schema:
+               $ref: '#/components/schemas/Error'
+  /store/categories:
+      get:
+        tags: 
+          - "store"
+        summary: "Get Store Categories"
+        operationId: "getCategories"
+        security: 
+          - bearerAuth: []
+        responses:
+          "200":
+            description: "Success"
+            content:
+              application/json:
+                schema:
+                  type: "object"
+                  properties:
+                    productCategories:
+                      type: "array"
+                      items:
+                        type: "string"
+          "401":
+            description: "Unauthorized - Invalid or expired Token"
+            content:
+              application/json:
+                schema:
+                 $ref: '#/components/schemas/Error'
+          "403":
+            description: "Forbidden - No token provided"
+            content:
+              application/json:
+                schema:
+                 $ref: '#/components/schemas/Error'
+          "500":
+            description: "Internal Server Error"
+            content:
+              application/json:
+                schema:
+                 $ref: '#/components/schemas/Error'
+                 
+        
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    Error:
+      type: "object"
+      properties:
+        code:
+          type: "integer"
+        name: 
+          type: "string"
+        description:
+          type: "string"
