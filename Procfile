@@ -1,1 +1,1 @@
-web: gunicorn app:app
+web: python database.migrations.py; gunicorn app:app
