@@ -28,8 +28,6 @@ def validate_authorization(func):
                 cursor.execute(select_token, (decoded.get("sub", 0),))
                 token = cursor.fetchone()
                 if token is not None:
-                    cursor.close()
-                    conn.close()
                     return func(decoded, token, **kwargs)
                 else:
                     raise Unauthorized(
