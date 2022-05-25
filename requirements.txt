@@ -12,7 +12,7 @@ Jinja2==2.11.3
 MarkupSafe==1.1.1
 pathspec==0.8.0
 pycparser==2.20
-PyJWT==1.7.1
+PyJWT==2.4.0
 regex==2020.4.4
 six==1.14.0
 toml==0.10.0
